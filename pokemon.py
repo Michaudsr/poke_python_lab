@@ -5,10 +5,25 @@ from random import *
 # the main class being used in this simulator
 
 class Pokemon:
+
+    def __init__(self, name, hp, ph_attack, defense, sp_attack, sp_defense, speed, type1, type2, moves):
+        self.name = name
+        self.hp = hp
+        self.ph_attack = ph_attack
+        self.defense = defense
+        self.sp_attack = sp_attack
+        self.sp_defense = sp_defense
+        self.speed = speed
+        self.type1 = type1
+        self.type2 = type2
+        self.moves = moves
     # PART 1 ########### TO DO ###################
     # Initialize the Pokemon Class with an __init__() method
     # This class takes in 10 variable parameters in addition to self
-    #
+    def revive(self, pokemon_hp):
+        self.__init__(self.name, pokemon_hp, self.ph_attack, self.defense, self.sp_attack, self.sp_defense, self.speed, self.type1, self.type2, self.moves)
+
+
     # HINT: Take a look at some of the instances of this pokemon class below along with some of the pre-built
     # class methods to get an idea of what you might want to call these variables along with their ordering
     # to call  these parameters
@@ -430,6 +445,7 @@ turn_counter = Timer()
 # would be helpful here.
 
 
+
 venusaur = Pokemon('Venusaur', 364, 180, 202, 328, 237, 196, 'grass', 'poison',
  [{'name': 'sludge bomb', 'movetype': 'poison', 'damage': 90, 'phys_special': 'special'},
  {'name': 'solarbeam', 'movetype': 'grass', 'damage': 120, 'phys_special': 'special'},
@@ -635,9 +651,12 @@ xerneas = Pokemon('Xerneas', 394, 268, 226, 397, 232, 297, 'fairy', 'none',
 
 # 1st new instance
 
+
 # 2nd new instance
 
+
 # 3rd new instance
+
 
 
 ########################################################################################
@@ -659,7 +678,77 @@ all_pokemon = [venusaur, charizard, blastoise, meganium, typhlosion, feraligatr,
 # new_game() function
 
 
-def battle():       # def battle(???, ???, ???, ???):
+def battle(pokemon1, pokemon2, turn_counter, save_mon):       # def battle(???, ???, ???, ???):
+    # PART 3 ############# TO DO ###################
+    turn_counter.add_turn()
+    print(f'Turn {turn_counter.counter}')
+    # BASE CASE
+    if pokemon1.hp <= 0:
+        turn_counter.reset()
+        print(f'{pokemon2.name} wins!')
+        return new_game(pokemon1, pokemon2, save_mon)
+    elif pokemon2.hp <= 0:
+        turn_counter.reset()
+        print(f'{pokemon1.name} wins!')
+        return new_game(pokemon1, pokemon2, save_mon)
+    # Create a randomized selection of moves for both pokemon
+    # Store each pokemon's move selection as integer variables
+    # Store each move's name as variables
+    # Store the data from each pokemon's moves into variables 
+    selection1 = round((len(pokemon1.moves)-1) * random())
+    move1_name = pokemon1.moves[selection1]['name']
+    move1 = pokemon1.attack(selection1)[0:5]
+    selection2 = round((len(pokemon2.moves)-1) * random())
+    move2_name = pokemon2.moves[selection2]['name']
+    move2 = pokemon2.attack(selection2)[0:5]
+    # Have the faster pokemon attack first
+    # Then have the second pokemon attack
+    # Print out which pokemon is making which attack whenever a pokemon makes an attack
+    # Send the right data for the pokemon to take damage from the other pokemon's attacks
+    if pokemon1.speed > pokemon2.speed:
+        print(f'{pokemon1.name} used {move1_name}!')
+        pokemon2.damage(move1[0], move1[1], move1[2], move1[3], move1[4])
+        if pokemon2.hp <= 0:
+            turn_counter.reset()
+            print(f'{pokemon1.name} wins!')
+            return new_game(pokemon1, pokemon2, save_mon)
+        else:
+            print(f'{pokemon2.name} used {move2_name}!')
+            pokemon1.damage(move2[0], move2[1], move2[2], move2[3], move2[4])
+    elif pokemon2.speed > pokemon1.speed:
+        print(f'{pokemon2.name} used {move2_name}!')
+        pokemon1.damage(move2[0], move2[1], move2[2], move2[3], move2[4])
+        if pokemon1.hp <= 0:
+            turn_counter.reset()
+            print(f'{pokemon2.name} wins!')
+            return new_game(pokemon1, pokemon2, save_mon)
+        else:
+            print(f'{pokemon1.name} used {move1_name}!')
+            pokemon2.damage(move1[0], move1[1], move1[2], move1[3], move1[4])
+    else:
+        first = round(2 * random())
+        if first == 1:
+            print(f"{pokemon1.name} used {move1_name}")
+            pokemon2.damage(move1[0], move1[1], move1[2], move1[3], move1[4])
+            if pokemon2.hp <= 0:
+                turn_counter.reset()
+                print(f'{pokemon1.name} wins!')
+                return new_game(pokemon1, pokemon2, save_mon) 
+            else:
+                print(f"{pokemon2.name} used {move2_name}")
+                pokemon1.damage(move2[0], move2[1], move2[2], move2[3], move2[4])
+        else:
+            print(f"{pokemon2.name} used {move2_name}")
+            pokemon1.damage(move2[0], move2[1], move2[2], move2[3], move2[4])
+            if pokemon1.hp <= 0:
+                turn_counter.reset()
+                print(f'{pokemon2.name} wins!')
+                return new_game(pokemon1, pokemon2, save_mon)
+            else:
+                print(f"{pokemon1.name} used {move1_name}")
+                pokemon2.damage(move1[0], move1[1], move1[2], move1[3], move1[4])
+    return battle(pokemon1, pokemon2, turn_counter, save_mon)
+
     # PART 3 ############# TO DO ###################
     # Establish a base case for the pokemon battle simulation
     # Add to the turn count on each turn (recursion)
@@ -680,7 +769,7 @@ def battle():       # def battle(???, ???, ???, ???):
 
     # RECURSIVE CASE HERE
 
-    return # ???????
+    
 
 ########################################################################################
 #                NEW GAME FUNCTION
